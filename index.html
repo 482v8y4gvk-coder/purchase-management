@@ -9,20 +9,19 @@
 *{box-sizing:border-box}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f6f9;color:#202938}
 .sidebar{background:#172337;color:white;width:240px;position:fixed;top:0;bottom:0;padding:24px 16px}
-.logo{font-size:21px;font-weight:700;margin:5px 10px 30px}
+.logo{font-size:20px;font-weight:700;margin:5px 10px 30px}
 .nav{display:block;width:100%;padding:13px 15px;margin:5px 0;border:0;background:none;color:#cbd5e1;text-align:left;border-radius:8px;font-size:15px;cursor:pointer}
 .nav:hover,.nav.active{background:#30445e;color:white}
 .main{margin-left:240px;padding:25px}
 .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px}
 .top h1{margin:0;font-size:25px}
-.status{background:white;padding:10px 15px;border-radius:10px;font-size:13px;color:#64748b}
+.status{background:white;padding:10px 15px;border-radius:10px;font-size:13px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:25px}
-.card{background:white;padding:22px;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.04)}
+.card,.panel{background:white;padding:22px;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.04);margin-bottom:20px}
 .card small{color:#64748b}
 .card h2{font-size:28px;margin:12px 0}
-.panel{background:white;padding:22px;border-radius:14px;margin-bottom:20px}
-.panel h3{margin-top:0}
 button.primary{background:#2563eb;color:white;border:0;border-radius:8px;padding:11px 16px;cursor:pointer}
+button.secondary{background:#e9eef5;color:#243247;border:0;border-radius:8px;padding:11px 16px;cursor:pointer}
 input,select,textarea{padding:11px;border:1px solid #dbe1e8;border-radius:8px;width:100%;margin:6px 0;font-size:14px}
 table{width:100%;border-collapse:collapse}
 th,td{text-align:left;padding:13px;border-bottom:1px solid #edf0f4}
@@ -30,6 +29,8 @@ th{color:#64748b;font-size:13px}
 .empty{text-align:center;color:#64748b;padding:30px}
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px}
 .hidden{display:none}
+.formgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.note{background:#f1f5f9;padding:12px;border-radius:8px;color:#475569;font-size:13px}
 @media(max-width:700px){
 .sidebar{width:100%;position:relative;bottom:auto;padding:12px}
 .logo{margin:8px}
@@ -55,7 +56,7 @@ th{color:#64748b;font-size:13px}
 <div class="main">
 <div class="top">
 <h1 id="pageTitle">Dashboard</h1>
-<div class="status" id="cloudStatus">Cloud connection: Setup pending</div>
+<div class="status" id="cloudStatus">Connecting to Firebase...</div>
 </div>
 
 <section id="dashboard">
@@ -66,18 +67,16 @@ th{color:#64748b;font-size:13px}
 <div class="card"><small>Price Updates</small><h2 id="historyCount">0</h2></div>
 </div>
 <div class="panel">
-<h3>Welcome to Purchase Management</h3>
-<p>Manage suppliers, materials, prices and purchasing orders from one place.</p>
-<p>Cloud data integration and account permissions will be configured in the next stages.</p>
+<h3>Purchase Management</h3>
+<p>Centralized purchasing, suppliers, materials, pricing and purchase orders.</p>
+<div class="note" id="connectionInfo">Checking cloud connection...</div>
 </div>
 </section>
 
 <section id="suppliers" class="hidden">
 <div class="panel">
 <h3>Supplier Database</h3>
-<div class="actions">
 <button class="primary" onclick="addSupplier()">+ Add Supplier</button>
-</div>
 <input id="supplierSearch" placeholder="Search suppliers..." oninput="renderSuppliers()">
 <table><thead><tr><th>Name</th><th>Country</th><th>Contact</th></tr></thead>
 <tbody id="supplierTable"></tbody></table>
@@ -87,10 +86,8 @@ th{color:#64748b;font-size:13px}
 <section id="materials" class="hidden">
 <div class="panel">
 <h3>Materials Database</h3>
-<div class="actions">
 <button class="primary" onclick="addMaterial()">+ Add Material</button>
-</div>
-<input id="materialSearch" placeholder="Search by name or code or supplier..." oninput="renderMaterials()">
+<input id="materialSearch" placeholder="Search by name, code or supplier..." oninput="renderMaterials()">
 <table><thead><tr><th>Internal Code</th><th>Supplier Code</th><th>Name</th><th>Supplier</th><th>Unit</th><th>Price</th><th>Currency</th></tr></thead>
 <tbody id="materialTable"></tbody></table>
 </div>
@@ -99,14 +96,14 @@ th{color:#64748b;font-size:13px}
 <section id="orders" class="hidden">
 <div class="panel">
 <h3>Purchase Orders</h3>
-<button class="primary" onclick="alert('Purchase order builder will be added in the next stage.')">+ New Purchase Order</button>
-<div class="empty">Order creation, PDF generation and archive will be implemented next.</div>
+<div class="note">Purchase order creation and PDF workflow will be built next.</div>
 </div>
 </section>
 
 <section id="history" class="hidden">
 <div class="panel">
 <h3>Price History</h3>
+<div class="note">Price history will be connected to material price updates.</div>
 <table><thead><tr><th>Date</th><th>Material</th><th>Old Price</th><th>New Price</th></tr></thead>
 <tbody id="historyTable"></tbody></table>
 </div>
@@ -115,78 +112,84 @@ th{color:#64748b;font-size:13px}
 <section id="users" class="hidden">
 <div class="panel">
 <h3>Users & Permissions</h3>
-<p>Pending registration approvals, roles and granular permissions will be configured securely.</p>
+<div class="note">Registration approval, username login, roles and permissions will be configured in the secure authentication stage.</div>
 </div>
 </section>
 
 <section id="settings" class="hidden">
 <div class="panel">
 <h3>System Settings</h3>
-<p>System configuration and company information.</p>
+<div class="note">Company information, currency and system settings will be added here.</div>
 </div>
 </section>
 </div>
 
-<script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAw55zm13D6SoC648lKtEL9E3gobey3Z8o",
+  authDomain: "purchase-management-syst-46670.firebaseapp.com",
+  projectId: "purchase-management-syst-46670",
+  storageBucket: "purchase-management-syst-46670.firebasestorage.app",
+  messagingSenderId: "920511157751",
+  appId: "1:920511157751:web:2b645b7d5d438ef9ba4af2",
+  measurementId: "G-RKL3LK7Y9Q"
+};
+
+let app;
+let db;
+
+try {
+  app = initializeApp(firebaseConfig);
+  db = getFirestore(app);
+  document.getElementById("cloudStatus").textContent="Firebase initialized";
+  document.getElementById("connectionInfo").textContent="Firebase configuration loaded. Database security rules are currently blocking data access until setup is completed.";
+  testCloud();
+} catch(e) {
+  document.getElementById("cloudStatus").textContent="Connection setup error";
+  document.getElementById("connectionInfo").textContent=e.message;
+}
+
+async function testCloud(){
+  try{
+    await getDocs(collection(db,"suppliers"));
+    document.getElementById("cloudStatus").textContent="Cloud connected";
+    document.getElementById("connectionInfo").textContent="Firestore connection confirmed.";
+  }catch(e){
+    document.getElementById("cloudStatus").textContent="Firebase initialized";
+    document.getElementById("connectionInfo").textContent="Firebase is initialized. Firestore access is not yet enabled by security rules.";
+  }
+}
+
 let suppliers=[];
 let materials=[];
 let history=[];
 
-function showPage(page,btn){
-document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
-document.getElementById(page).classList.remove("hidden");
-document.querySelectorAll(".nav").forEach(b=>b.classList.remove("active"));
-btn.classList.add("active");
-document.getElementById("pageTitle").textContent=btn.textContent.trim();
-}
+window.showPage=function(page,btn){
+  document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
+  document.getElementById(page).classList.remove("hidden");
+  document.querySelectorAll(".nav").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  document.getElementById("pageTitle").textContent=btn.textContent.trim();
+};
 
-function addSupplier(){
-let name=prompt("Supplier name:");
-if(!name)return;
-let country=prompt("Country:")||"";
-let contact=prompt("Contact details:")||"";
-suppliers.push({name,country,contact});
-renderSuppliers();
-updateCounts();
-}
+window.addSupplier=function(){
+  alert("Supplier entry will be enabled after Firestore security rules are configured.");
+};
 
-function renderSuppliers(){
-let q=(document.getElementById("supplierSearch").value||"").toLowerCase();
-let filtered=suppliers.filter(s=>(s.name+s.country+s.contact).toLowerCase().includes(q));
-document.getElementById("supplierTable").innerHTML=filtered.map(s=>`<tr><td>${escapeHTML(s.name)}</td><td>${escapeHTML(s.country)}</td><td>${escapeHTML(s.contact)}</td></tr>`).join("");
-}
+window.addMaterial=function(){
+  alert("Material entry will be enabled after Firestore security rules are configured.");
+};
 
-function addMaterial(){
-let code=prompt("Internal material code:");
-if(!code)return;
-let supplierCode=prompt("Supplier code:")||"";
-let name=prompt("Material name:");
-if(!name)return;
-let supplier=prompt("Supplier name:")||"";
-let unit=prompt("Unit (KG, M, PCS etc):")||"";
-let price=Number(prompt("Current price:")||0);
-let currency=prompt("Currency (USD, EGP, EUR etc):")||"USD";
-materials.push({code,supplierCode,name,supplier,unit,price,currency});
-renderMaterials();
-updateCounts();
-}
+window.renderSuppliers=function(){
+  document.getElementById("supplierTable").innerHTML="";
+};
 
-function renderMaterials(){
-let q=(document.getElementById("materialSearch").value||"").toLowerCase();
-let filtered=materials.filter(m=>(m.code+m.supplierCode+m.name+m.supplier).toLowerCase().includes(q));
-document.getElementById("materialTable").innerHTML=filtered.map(m=>`<tr><td>${escapeHTML(m.code)}</td><td>${escapeHTML(m.supplierCode)}</td><td>${escapeHTML(m.name)}</td><td>${escapeHTML(m.supplier)}</td><td>${escapeHTML(m.unit)}</td><td>${m.price}</td><td>${escapeHTML(m.currency)}</td></tr>`).join("");
-}
-
-function updateCounts(){
-document.getElementById("supplierCount").textContent=suppliers.length;
-document.getElementById("materialCount").textContent=materials.length;
-document.getElementById("orderCount").textContent=0;
-document.getElementById("historyCount").textContent=history.length;
-}
-
-function escapeHTML(str){
-return String(str).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-}
+window.renderMaterials=function(){
+  document.getElementById("materialTable").innerHTML="";
+};
 </script>
 </body>
 </html>
