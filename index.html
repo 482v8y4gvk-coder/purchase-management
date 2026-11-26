@@ -6,42 +6,41 @@
 <title>Purchase Management</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f6f9;color:#202938}
-.sidebar{background:#172337;color:white;width:240px;position:fixed;top:0;bottom:0;padding:24px 16px;overflow-y:auto}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f4f6f9;color:#202938;overflow-x:hidden}
+.sidebar{background:#172337;color:white;width:240px;position:fixed;top:0;bottom:0;left:0;padding:24px 16px;overflow-y:auto;z-index:5}
 .logo{font-size:20px;font-weight:700;margin:5px 10px 30px}
 .nav{display:block;width:100%;padding:13px 15px;margin:5px 0;border:0;background:none;color:#cbd5e1;text-align:left;border-radius:8px;font-size:15px;cursor:pointer}
 .nav:hover,.nav.active{background:#30445e;color:white}
-.main{margin-left:240px;padding:25px}
+.main{margin-left:240px;padding:25px;min-width:0}
 .top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:25px;flex-wrap:wrap}
 .top h1{margin:0;font-size:25px}
-.status{background:white;padding:10px 15px;border-radius:10px;font-size:13px}
+.status{background:white;padding:10px 15px;border-radius:10px;font-size:13px;max-width:100%}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:25px}
-.card,.panel{background:white;padding:22px;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.04);margin-bottom:20px}
+.card,.panel{background:white;padding:22px;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.04);margin-bottom:20px;min-width:0}
 .card small{color:#64748b}
 .card h2{font-size:28px;margin:12px 0}
 button.primary{background:#2563eb;color:white;border:0;border-radius:8px;padding:11px 16px;cursor:pointer}
-button.secondary{background:#e9eef5;color:#243247;border:0;border-radius:8px;padding:11px 16px;cursor:pointer}
 input,select,textarea{padding:11px;border:1px solid #dbe1e8;border-radius:8px;width:100%;margin:6px 0;font-size:14px}
 table{width:100%;border-collapse:collapse}
 th,td{text-align:left;padding:13px;border-bottom:1px solid #edf0f4}
 th{color:#64748b;font-size:13px}
-.empty{text-align:center;color:#64748b;padding:30px}
 .actions{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:15px}
 .hidden{display:none}
 .note{background:#f1f5f9;padding:12px;border-radius:8px;color:#475569;font-size:13px}
 .langBtn{border:1px solid #cbd5e1;background:#fff;border-radius:9px;padding:10px 14px;cursor:pointer;font-weight:600}
-@media(max-width:700px){
-.sidebar{width:100%;position:relative;bottom:auto;padding:12px}
-.logo{margin:8px}
-.nav{display:inline-block;width:auto;padding:9px}
-.main{margin:0;padding:15px}
-.top{align-items:flex-start;gap:10px;flex-wrap:wrap}
+@media(max-width:800px){
+.sidebar{width:auto;position:relative;left:auto;right:auto;top:auto;bottom:auto;padding:12px;overflow:visible}
+.logo{margin:8px 5px 14px}
+.nav{display:inline-block;width:auto;padding:9px 11px;margin:3px}
+.main{margin:0;padding:15px;width:100%}
+.top{align-items:flex-start;gap:10px}
 }
-body[dir="rtl"] .sidebar{right:0;left:auto}
+body[dir="rtl"] .sidebar{left:auto;right:0}
 body[dir="rtl"] .main{margin-left:0;margin-right:240px}
 body[dir="rtl"] .nav{text-align:right}
 body[dir="rtl"] th,body[dir="rtl"] td{text-align:right}
-@media(max-width:700px){body[dir="rtl"] .main{margin:0}}
+body[dir="rtl"] .top{direction:rtl}
+@media(max-width:800px){body[dir="rtl"] .sidebar{right:auto;left:auto}body[dir="rtl"] .main{margin:0}body[dir="rtl"] .nav{text-align:right}}
 </style>
 </head>
 <body>
@@ -60,7 +59,7 @@ body[dir="rtl"] th,body[dir="rtl"] td{text-align:right}
 <h1 id="pageTitle" data-i18n="dashboard">Dashboard</h1>
 <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
 <button class="langBtn" id="languageButton" onclick="toggleLanguage()">🇸🇦 العربية</button>
-<div class="status" id="cloudStatus" data-i18n="connecting">Connecting to Firebase...</div>
+<div class="status" id="cloudStatus">Firebase setup</div>
 </div>
 </div>
 <section id="dashboard">
@@ -70,66 +69,42 @@ body[dir="rtl"] th,body[dir="rtl"] td{text-align:right}
 <div class="card"><small data-i18n="purchaseOrders">Purchase Orders</small><h2 id="orderCount">0</h2></div>
 <div class="card"><small data-i18n="priceUpdates">Price Updates</small><h2 id="historyCount">0</h2></div>
 </div>
-<div class="panel">
-<h3 data-i18n="welcome">Purchase Management</h3>
-<p data-i18n="welcomeText">Centralized purchasing, suppliers, materials, pricing and purchase orders.</p>
-<div class="note" id="connectionInfo" data-i18n="checking">Checking cloud connection...</div>
-</div>
+<div class="panel"><h3 data-i18n="welcome">Purchase Management</h3><p data-i18n="welcomeText">Centralized purchasing, suppliers, materials, pricing and purchase orders.</p><div class="note" id="connectionInfo"></div></div>
 </section>
-<section id="suppliers" class="hidden">
-<div class="panel"><h3 data-i18n="supplierDatabase">Supplier Database</h3>
-<button class="primary" onclick="addSupplier()" data-i18n="addSupplier">+ Add Supplier</button>
-<input id="supplierSearch" placeholder="Search suppliers..." data-i18n-placeholder="searchSuppliers" oninput="renderSuppliers()">
-<table><thead><tr><th data-i18n="name">Name</th><th data-i18n="country">Country</th><th data-i18n="contact">Contact</th></tr></thead><tbody id="supplierTable"></tbody></table>
-</div></section>
-<section id="materials" class="hidden">
-<div class="panel"><h3 data-i18n="materialsDatabase">Materials Database</h3>
-<button class="primary" onclick="addMaterial()" data-i18n="addMaterial">+ Add Material</button>
-<input id="materialSearch" placeholder="Search by name, code or supplier..." data-i18n-placeholder="searchMaterials" oninput="renderMaterials()">
-<table><thead><tr><th data-i18n="internalCode">Internal Code</th><th data-i18n="supplierCode">Supplier Code</th><th data-i18n="name">Name</th><th data-i18n="supplier">Supplier</th><th data-i18n="unit">Unit</th><th data-i18n="price">Price</th><th data-i18n="currency">Currency</th></tr></thead><tbody id="materialTable"></tbody></table>
-</div></section>
-<section id="orders" class="hidden"><div class="panel"><h3 data-i18n="purchaseOrders">Purchase Orders</h3><div class="note" data-i18n="ordersNext">Purchase order creation and PDF workflow will be built next.</div></div></section>
-<section id="history" class="hidden"><div class="panel"><h3 data-i18n="priceHistory">Price History</h3><div class="note" data-i18n="historyNext">Price history will be connected to material price updates.</div><table><thead><tr><th data-i18n="date">Date</th><th data-i18n="material">Material</th><th data-i18n="oldPrice">Old Price</th><th data-i18n="newPrice">New Price</th></tr></thead><tbody id="historyTable"></tbody></table></div></section>
+<section id="suppliers" class="hidden"><div class="panel"><h3 data-i18n="supplierDatabase">Supplier Database</h3><button class="primary" onclick="addSupplier()" data-i18n="addSupplier">+ Add Supplier</button><input id="supplierSearch" placeholder="Search suppliers..." data-i18n-placeholder="searchSuppliers" oninput="renderSuppliers()"><table><thead><tr><th data-i18n="name">Name</th><th data-i18n="country">Country</th><th data-i18n="contact">Contact</th></tr></thead><tbody id="supplierTable"></tbody></table></div></section>
+<section id="materials" class="hidden"><div class="panel"><h3 data-i18n="materialsDatabase">Materials Database</h3><button class="primary" onclick="addMaterial()" data-i18n="addMaterial">+ Add Material</button><input id="materialSearch" placeholder="Search by name, code or supplier..." data-i18n-placeholder="searchMaterials" oninput="renderMaterials()"><table><thead><tr><th data-i18n="internalCode">Internal Code</th><th data-i18n="supplierCode">Supplier Code</th><th data-i18n="name">Name</th><th data-i18n="supplier">Supplier</th><th data-i18n="unit">Unit</th><th data-i18n="price">Price</th><th data-i18n="currency">Currency</th></tr></thead><tbody id="materialTable"></tbody></table></div></section>
+<section id="orders" class="hidden"><div class="panel"><h3 data-i18n="orders">Purchase Orders</h3><div class="note" data-i18n="ordersNext">Purchase order creation and PDF workflow will be built next.</div></div></section>
+<section id="history" class="hidden"><div class="panel"><h3 data-i18n="history">Price History</h3><div class="note" data-i18n="historyNext">Price history will be connected to material price updates.</div><table><thead><tr><th data-i18n="date">Date</th><th data-i18n="material">Material</th><th data-i18n="oldPrice">Old Price</th><th data-i18n="newPrice">New Price</th></tr></thead><tbody id="historyTable"></tbody></table></div></section>
 <section id="users" class="hidden"><div class="panel"><h3 data-i18n="users">Users & Permissions</h3><div class="note" data-i18n="usersNext">Registration approval, username login, roles and permissions will be configured in the secure authentication stage.</div></div></section>
 <section id="settings" class="hidden"><div class="panel"><h3 data-i18n="settings">Settings</h3><div class="note" data-i18n="settingsNext">Company information, currency and system settings will be added here.</div></div></section>
 </div>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-const firebaseConfig = {
-  apiKey: "AIzaSyAw55zm13D6SoC648lKtEL9E3gobey3Z8o",
-  authDomain: "purchase-management-syst-46670.firebaseapp.com",
-  projectId: "purchase-management-syst-46670",
-  storageBucket: "purchase-management-syst-46670.firebasestorage.app",
-  messagingSenderId: "920511157751",
-  appId: "1:920511157751:web:2b645b7d5d438ef9ba4af2",
-  measurementId: "G-RKL3LK7Y9Q"
+const firebaseConfig={apiKey:"AIzaSyAw55zm13D6SoC648lKtEL9E3gobey3Z8o",authDomain:"purchase-management-syst-46670.firebaseapp.com",projectId:"purchase-management-syst-46670",storageBucket:"purchase-management-syst-46670.firebasestorage.app",messagingSenderId:"920511157751",appId:"1:920511157751:web:2b645b7d5d438ef9ba4af2",measurementId:"G-RKL3LK7Y9Q"};
+const T={
+en:{logo:"📦 Purchase Management",dashboard:"Dashboard",suppliers:"Suppliers",materials:"Materials",orders:"Purchase Orders",history:"Price History",users:"Users & Permissions",settings:"Settings",totalSuppliers:"Total Suppliers",totalMaterials:"Total Materials",purchaseOrders:"Purchase Orders",priceUpdates:"Price Updates",welcome:"Purchase Management",welcomeText:"Centralized purchasing, suppliers, materials, pricing and purchase orders.",supplierDatabase:"Supplier Database",addSupplier:"+ Add Supplier",searchSuppliers:"Search suppliers...",name:"Name",country:"Country",contact:"Contact",materialsDatabase:"Materials Database",addMaterial:"+ Add Material",searchMaterials:"Search by name, code or supplier...",internalCode:"Internal Code",supplierCode:"Supplier Code",supplier:"Supplier",unit:"Unit",price:"Price",currency:"Currency",ordersNext:"Purchase order creation and PDF workflow will be built next.",historyNext:"Price history will be connected to material price updates.",date:"Date",material:"Material",oldPrice:"Old Price",newPrice:"New Price",usersNext:"Registration approval, username login, roles and permissions will be configured in the secure authentication stage.",settingsNext:"Company information, currency and system settings will be added here.",connecting:"Checking Firestore connection...",initialized:"Firebase initialized, but Firestore access is blocked by the current security rules.",connected:"Firestore read test succeeded.",blocked:"Firebase is initialized. Firestore access is currently blocked by security rules. This is expected at this setup stage.",error:"Firebase setup error"},
+ar:{logo:"📦 إدارة المشتريات",dashboard:"لوحة التحكم",suppliers:"الموردون",materials:"المواد",orders:"أوامر الشراء",history:"سجل الأسعار",users:"المستخدمون والصلاحيات",settings:"الإعدادات",totalSuppliers:"إجمالي الموردين",totalMaterials:"إجمالي المواد",purchaseOrders:"أوامر الشراء",priceUpdates:"تحديثات الأسعار",welcome:"إدارة المشتريات",welcomeText:"إدارة الموردين والمواد والأسعار وأوامر الشراء من مكان واحد.",supplierDatabase:"قاعدة بيانات الموردين",addSupplier:"+ إضافة مورد",searchSuppliers:"بحث عن الموردين...",name:"الاسم",country:"البلد",contact:"بيانات التواصل",materialsDatabase:"قاعدة بيانات المواد",addMaterial:"+ إضافة مادة",searchMaterials:"بحث بالاسم أو الكود أو المورد...",internalCode:"الكود الداخلي",supplierCode:"كود المورد",supplier:"المورد",unit:"الوحدة",price:"السعر",currency:"العملة",ordersNext:"سيتم إضافة إنشاء أوامر الشراء وتصدير PDF في المرحلة التالية.",historyNext:"سيتم ربط سجل الأسعار بتحديثات أسعار المواد.",date:"التاريخ",material:"المادة",oldPrice:"السعر السابق",newPrice:"السعر الجديد",usersNext:"سيتم إعداد الموافقة على التسجيل وتسجيل الدخول باسم المستخدم والأدوار والصلاحيات في مرحلة الأمان.",settingsNext:"ستضاف معلومات الشركة والعملات وإعدادات النظام هنا.",connecting:"جارٍ اختبار اتصال Firestore...",initialized:"تم تهيئة Firebase، لكن قواعد الأمان الحالية تمنع الوصول إلى Firestore.",connected:"نجح اختبار القراءة من Firestore.",blocked:"تم تهيئة Firebase. الوصول إلى Firestore ممنوع حالياً بواسطة قواعد الأمان، وهذا متوقع في مرحلة الإعداد.",error:"خطأ في إعداد Firebase"}
 };
-const translations={
-en:{logo:"📦 Purchase Management",dashboard:"Dashboard",suppliers:"Suppliers",materials:"Materials",orders:"Purchase Orders",history:"Price History",users:"Users & Permissions",settings:"Settings",connecting:"Connecting to Firebase...",totalSuppliers:"Total Suppliers",totalMaterials:"Total Materials",purchaseOrders:"Purchase Orders",priceUpdates:"Price Updates",welcome:"Purchase Management",welcomeText:"Centralized purchasing, suppliers, materials, pricing and purchase orders.",checking:"Checking cloud connection...",supplierDatabase:"Supplier Database",addSupplier:"+ Add Supplier",searchSuppliers:"Search suppliers...",name:"Name",country:"Country",contact:"Contact",materialsDatabase:"Materials Database",addMaterial:"+ Add Material",searchMaterials:"Search by name, code or supplier...",internalCode:"Internal Code",supplierCode:"Supplier Code",supplier:"Supplier",unit:"Unit",price:"Price",currency:"Currency",ordersNext:"Purchase order creation and PDF workflow will be built next.",priceHistory:"Price History",historyNext:"Price history will be connected to material price updates.",date:"Date",material:"Material",oldPrice:"Old Price",newPrice:"New Price",usersNext:"Registration approval, username login, roles and permissions will be configured in the secure authentication stage.",settingsNext:"Company information, currency and system settings will be added here.",firebaseInit:"Firebase initialized",cloudConnected:"Cloud connected",firebaseInfo:"Firebase configuration loaded. Database security rules are currently blocking data access until setup is completed.",firestoreConfirmed:"Firestore connection confirmed.",firestoreBlocked:"Firebase is initialized. Firestore access is not yet enabled by security rules.",connectionError:"Connection setup error"},
-ar:{logo:"📦 إدارة المشتريات",dashboard:"لوحة التحكم",suppliers:"الموردون",materials:"المواد",orders:"أوامر الشراء",history:"سجل الأسعار",users:"المستخدمون والصلاحيات",settings:"الإعدادات",connecting:"جارٍ الاتصال بـ Firebase...",totalSuppliers:"إجمالي الموردين",totalMaterials:"إجمالي المواد",purchaseOrders:"أوامر الشراء",priceUpdates:"تحديثات الأسعار",welcome:"إدارة المشتريات",welcomeText:"إدارة الموردين والمواد والأسعار وأوامر الشراء من مكان واحد.",checking:"جارٍ التحقق من الاتصال...",supplierDatabase:"قاعدة بيانات الموردين",addSupplier:"+ إضافة مورد",searchSuppliers:"بحث عن الموردين...",name:"الاسم",country:"البلد",contact:"بيانات التواصل",materialsDatabase:"قاعدة بيانات المواد",addMaterial:"+ إضافة مادة",searchMaterials:"بحث بالاسم أو الكود أو المورد...",internalCode:"الكود الداخلي",supplierCode:"كود المورد",supplier:"المورد",unit:"الوحدة",price:"السعر",currency:"العملة",ordersNext:"سيتم إضافة إنشاء أوامر الشراء وتصدير PDF في المرحلة التالية.",priceHistory:"سجل الأسعار",historyNext:"سيتم ربط سجل الأسعار بتحديثات أسعار المواد.",date:"التاريخ",material:"المادة",oldPrice:"السعر السابق",newPrice:"السعر الجديد",usersNext:"سيتم إعداد الموافقة على التسجيل وتسجيل الدخول باسم المستخدم والأدوار والصلاحيات في مرحلة الأمان.",settingsNext:"ستضاف معلومات الشركة والعملات وإعدادات النظام هنا.",firebaseInit:"تم تهيئة Firebase",cloudConnected:"متصل بالسحابة",firebaseInfo:"تم تحميل إعداد Firebase. قواعد أمان قاعدة البيانات تمنع الوصول حالياً حتى اكتمال الإعداد.",firestoreConfirmed:"تم تأكيد الاتصال بـ Firestore.",firestoreBlocked:"تم تهيئة Firebase، لكن قواعد الأمان لا تسمح بالوصول إلى البيانات حالياً.",connectionError:"خطأ في إعداد الاتصال"}
-};
-let lang=localStorage.getItem("pm-language")||"en";
+let lang=localStorage.getItem("pm-language")||"en", connectionState="connecting";
 function applyLanguage(){
- document.documentElement.lang=lang;document.documentElement.dir=lang==="ar"?"rtl":"ltr";
- document.querySelectorAll("[data-i18n]").forEach(el=>{const key=el.dataset.i18n;if(translations[lang][key])el.textContent=translations[lang][key]});
- document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>{const key=el.dataset.i18nPlaceholder;if(translations[lang][key])el.placeholder=translations[lang][key]});
- document.getElementById("languageButton").textContent=lang==="en"?"🇸🇦 العربية":"🇬🇧 English";
- const active=document.querySelector(".nav.active");if(active)document.getElementById("pageTitle").textContent=translations[lang][active.dataset.page]||active.textContent;
+document.documentElement.lang=lang;document.documentElement.dir=lang==="ar"?"rtl":"ltr";
+document.querySelectorAll("[data-i18n]").forEach(el=>{let k=el.dataset.i18n;if(T[lang][k])el.textContent=T[lang][k]});
+document.querySelectorAll("[data-i18n-placeholder]").forEach(el=>{let k=el.dataset.i18nPlaceholder;if(T[lang][k])el.placeholder=T[lang][k]});
+document.getElementById("languageButton").textContent=lang==="en"?"🇸🇦 العربية":"🇬🇧 English";
+const active=document.querySelector(".nav.active");if(active)document.getElementById("pageTitle").textContent=T[lang][active.dataset.page]||T[lang].dashboard;
+document.getElementById("cloudStatus").textContent=T[lang][connectionState]||T[lang].connecting;
+document.getElementById("connectionInfo").textContent=T[lang][connectionState]||T[lang].connecting;
 }
-window.toggleLanguage=function(){lang=lang==="en"?"ar":"en";localStorage.setItem("pm-language",lang);applyLanguage()};
-window.showPage=function(page,btn){document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));document.getElementById(page).classList.remove("hidden");document.querySelectorAll(".nav").forEach(b=>b.classList.remove("active"));btn.classList.add("active");document.getElementById("pageTitle").textContent=translations[lang][page]||btn.textContent;};
-window.addSupplier=function(){alert(lang==="ar"?"سيتم تفعيل إضافة الموردين بعد إعداد قواعد الأمان.":"Supplier entry will be enabled after Firestore security rules are configured.")};
-window.addMaterial=function(){alert(lang==="ar"?"سيتم تفعيل إضافة المواد بعد إعداد قواعد الأمان.":"Material entry will be enabled after Firestore security rules are configured.")};
-window.renderSuppliers=function(){document.getElementById("supplierTable").innerHTML=""};
-window.renderMaterials=function(){document.getElementById("materialTable").innerHTML=""};
+window.toggleLanguage=()=>{lang=lang==="en"?"ar":"en";localStorage.setItem("pm-language",lang);applyLanguage()};
+window.showPage=(page,btn)=>{document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));document.getElementById(page).classList.remove("hidden");document.querySelectorAll(".nav").forEach(b=>b.classList.remove("active"));btn.classList.add("active");document.getElementById("pageTitle").textContent=T[lang][page]||btn.textContent;};
+window.addSupplier=()=>alert(lang==="ar"?"سيتم تفعيل إضافة الموردين بعد إعداد قواعد الأمان.":"Supplier entry will be enabled after security rules are configured.");
+window.addMaterial=()=>alert(lang==="ar"?"سيتم تفعيل إضافة المواد بعد إعداد قواعد الأمان.":"Material entry will be enabled after security rules are configured.");
+window.renderSuppliers=()=>document.getElementById("supplierTable").innerHTML="";
+window.renderMaterials=()=>document.getElementById("materialTable").innerHTML="";
 applyLanguage();
-try{
- const app=initializeApp(firebaseConfig);const db=getFirestore(app);
- document.getElementById("cloudStatus").textContent=translations[lang].firebaseInit;
- document.getElementById("connectionInfo").textContent=translations[lang].firebaseInfo;
- getDocs(collection(db,"suppliers")).then(()=>{document.getElementById("cloudStatus").textContent=translations[lang].cloudConnected;document.getElementById("connectionInfo").textContent=translations[lang].firestoreConfirmed}).catch(()=>{document.getElementById("cloudStatus").textContent=translations[lang].firebaseInit;document.getElementById("connectionInfo").textContent=translations[lang].firestoreBlocked});
-}catch(e){document.getElementById("cloudStatus").textContent=translations[lang].connectionError;document.getElementById("connectionInfo").textContent=e.message}
+try{const app=initializeApp(firebaseConfig);const db=getFirestore(app);connectionState="initialized";applyLanguage();getDocs(collection(db,"suppliers")).then(()=>{connectionState="connected";applyLanguage()}).catch(()=>{connectionState="blocked";applyLanguage()})}
+catch(e){connectionState="error";applyLanguage();document.getElementById("connectionInfo").textContent=e.message}
 </script>
 </body>
 </html>
